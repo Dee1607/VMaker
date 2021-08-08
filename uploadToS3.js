@@ -6,9 +6,9 @@ exports.uploadFiles = async function(data) {
     var audio = data.audio;
     var username = data.userName;
     var promises = []
-    promises.push(audioUpload(audio));
+    promises.push(audioUpload(audio,username));
     files.forEach((file, index) => {
-        promises.push(imageUpload(file, index))
+        promises.push(imageUpload(file, index,username))
     });
     
     return Promise.all(promises).then(response => {
@@ -16,12 +16,12 @@ exports.uploadFiles = async function(data) {
     })
 }
 
-imageUpload = (file, index) => {
+imageUpload = (file, index,username) => {
     const base64File = new Buffer.from(file.replace(/^data:image\/\w+;base64,/, ""), 'base64');
     const type = file.split(';')[0].split('/')[1]; 
     const params = {
         Bucket: 'input12',
-        Key:"Deep" +"/"+`${index + 1}.${type}`,
+        Key:username +"/"+`${index + 1}.${type}`,
         Body: base64File,
         ACL: 'public-read',
         ContentEncoding: 'base64',
@@ -42,13 +42,13 @@ imageUpload = (file, index) => {
     }) 
 }
 
-audioUpload = (audio) => {
+audioUpload = (audio,username) => {
     const base64AudioFile = new Buffer.from(audio.replace(/^data:audio\/\w+;base64,/, ""), 'base64');
     const audioFileType = audio.split(';')[0].split('/')[1];
     
     const params = {
         Bucket: 'input12',
-        Key:"Deep"+"/"+`audio.${audioFileType}`,
+        Key:username+"/"+`audio.${audioFileType}`,
         Body: base64AudioFile,
         ACL: 'public-read',
         ContentEncoding: 'base64',
