@@ -12,21 +12,12 @@ let bodyParser = require("body-parser");
 const fs = require("fs").promises;
 const retrieveSecrets = require("./retriveSecrets");
 
-//routes to verify that the secrets were retrieved successfully.
-app.get("/", (req, res) => {
-  return res.status(200).json({
-    SECRET_1: process.env.SECRET_1,
-    SECRET_2: process.env.SECRET_2,
-  });
-});
-
 app.set('port', process.env.PORT || 8080);
 var jsonParser = bodyParser.json({limit:1024*1024*10, type:'application/json'}); 
 var urlencodedParser = bodyParser.urlencoded({ extended:true,limit:1024*1024*10,type:'application/x-www-form-urlencoded' });
 app.use(jsonParser);
 app.use(urlencodedParser);
 
-app.use(express.static('public'))
 app.use(cors())
 
 app.use(session({
@@ -36,9 +27,23 @@ app.use(session({
   cookie: { maxAge: 60000, token: "" }
 }))
 
+app.use(express.static(path.join(__dirname, './reactModules/build')));
+
+//routes to verify that the secrets were retrieved successfully.
+app.get("/secret", (req, res) => {
+  return res.status(200).json({
+    SECRET_1: process.env.SECRET_1,
+    SECRET_2: process.env.SECRET_2,
+  });
+});
 app.post('/register', user.register);
 app.post('/create', user.create);
 app.post('/sendNotification', user.sendNotification);
+
+app.get("/*", (req, res) => {
+  return res.sendFile(path.join(__dirname, './reactModules/build/index.html'));
+});
+
 
 // app.listen(8080, async () => {
 //   try {
@@ -81,6 +86,6 @@ app.post('/sendNotification', user.sendNotification);
 //   }
 // });
 
-app.listen(8080);
-
-console.log("Server started...")
+app.listen(process.env.PORT || 8080, () => {
+  console.log("Server started...")
+});
