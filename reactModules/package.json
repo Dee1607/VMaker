@@ -61,5 +61,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3000"
+  "proxy": "http://cloudg12-env.eba-4uxyvrhc.us-east-1.elasticbeanstalk.com/"
 }
