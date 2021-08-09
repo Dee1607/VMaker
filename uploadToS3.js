@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
 exports.uploadFiles = async function(data) {
+    
     var files = data.images;
     var audio = data.audio;
     var username = data.userName;
